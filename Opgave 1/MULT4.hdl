@@ -1,12 +1,45 @@
 CHIP MULT4 {
 IN a[4],b[4];
-OUT s[8],t[6],u[6];
+OUT s[8],t[6];//,u[6];
 
 PARTS:
+And(a=a[0], b=b[0],out=s[0]);
+And(a=a[1], b=b[0],out=FA00a);
+And(a=a[2], b=b[0],out=FA10a);
+And(a=a[3], b=b[0],out=FA20a);
+
+And(a=a[0], b=b[1],out=FA00b);
+And(a=a[1], b=b[1],out=FA10b);
+And(a=a[2], b=b[1],out=FA20b);
+And(a=a[3], b=b[1],out=FA30b);
+
+FullAdder(a=FA00a, b=FA00b, c=false, sum=s[1], carry=c10);
+FullAdder(a=FA10a, b=FA10b, c=c10, sum=FA01a, carry=c20);
+FullAdder(a=FA20a, b=FA20b, c=c20, sum=FA11a, carry=c30);
+FullAdder(a=false, b=FA30b, c=c30, sum=FA21a, carry=FA31a);
+
+And(a=a[0], b=b[2],out=FA01b);
+And(a=a[1], b=b[2],out=FA11b);
+And(a=a[2], b=b[2],out=FA21b);
+And(a=a[3], b=b[2],out=FA31b);
+
+FullAdder(a=FA01a, b=FA01b, c=false, sum=s[2], carry=c11);
+FullAdder(a=FA11a, b=FA11b, c=c11, sum=FA02a, carry=c21);
+FullAdder(a=FA21a, b=FA21b, c=c21, sum=FA12a, carry=c31);
+FullAdder(a=FA31a, b=FA31b, c=c31, sum=FA22a, carry=FA32a);
+
+And(a=a[0], b=b[3],out=FA02b);
+And(a=a[1], b=b[3],out=FA12b);
+And(a=a[2], b=b[3],out=FA22b);
+And(a=a[3], b=b[3],out=FA32b);
+
+FullAdder(a=FA02a, b=FA02b, c=false, sum=s[3], carry=c12);
+FullAdder(a=FA12a, b=FA12b, c=c12, sum=s[4], carry=c22);
+FullAdder(a=FA22a, b=FA22b, c=c22, sum=s[5], carry=c32);
+FullAdder(a=FA32a, b=FA32b, c=c32, sum=s[6], carry=s[7]);
 
 
-
-
+}
 
 
 
