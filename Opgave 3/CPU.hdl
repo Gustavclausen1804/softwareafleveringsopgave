@@ -1,0 +1,57 @@
+CHIP CPU {
+
+    IN  inM[16],         //input from Computer with instructions
+        instruction[16], 
+        reset;           
+                         
+                         
+
+    OUT outM[16],        // Output to memory
+        writeM,          
+        addressM[15],    
+        pc[15];          
+
+    PARTS:
+    // Instruction types
+    //ins15
+    Not(in=instruction[15], out=ins15Not);      
+    Not(in=ins15Not, out=ins15);
+
+    // A instruction and a register
+    And(a=ins15, b=instruction[5], out=ALUtoA); 
+    Mux16(a=instruction, b=ALUOut, sel=ALUtoA, out=ARIn);
+        
+    Or(a=ins15Not, b=instruction[5], out=ARLoad);
+    ARegister(in=ARIn, load=ARLoad, out=AROut);
+
+    // D register
+    And(a=ins15, b=instruction[4], out=DRLoad);
+    DRegister(in=ALUOut, load=DRLoad, out=DROut);
+
+    // C instruction type distinction: calculate A or M
+    Mux16(a=AROut, b=inM, sel=instruction[12], out=AMOut);
+
+    // ALU logic
+    ALU(x=DROut, y=AMOut, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUOut, zr=ALUzr, ng=ALUng);
+
+
+    // outM & writeM & addressM
+    And16(a=true, b=ALUOut, out=outM);
+    And(a=ins15, b=instruction[3], out=writeM);
+    And16(a=true, b=AROut, out[0..14]=addressM[0..14]);
+
+    // jump logic
+    And(a=ALUng, b=instruction[2], out=j1Out);
+    And(a=ALUzr, b=instruction[1], out=j2Out);
+    Or(a=ALUng, b=ALUzr, out=po);
+    Not(in=po, out=ALUpo);
+    And(a=ALUpo, b=instruction[0], out=j3Out);
+    Or8Way(in[0]=j1Out, in[1]=j2Out, in[2]=j3Out, in[3..7]=false, out=jump);
+    And(a=ins15, b=jump, out=jumpOut);
+
+    // PC
+    PC(in=AROut, load=jumpOut, inc=true, reset=reset, out[0..14]=pc[0..14]);
+}
+
+set instruction %B0011000000111001, // @12345
+tick, output, tock, output;
