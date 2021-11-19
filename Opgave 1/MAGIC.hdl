@@ -1,0 +1,14 @@
+CHIP MAGIC {
+IN in,Cin;
+OUT out, Cout;
+
+PARTS:
+And(a=in, b=Cin, out=Cout);
+Xor(a=in, b=Cin, out=out);
+}
+
+
+
+
+
+
