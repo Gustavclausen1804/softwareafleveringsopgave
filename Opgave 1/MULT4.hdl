@@ -1,0 +1,12 @@
+CHIP MULT4 {
+IN a[4],b[4];
+OUT s[8],t[6],u[6];
+
+PARTS:
+
+
+
+
+
+
+
