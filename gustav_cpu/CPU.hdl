@@ -1,0 +1,43 @@
+CHIP CPU {
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    // We have given each part an ID which references to the diagram - it makes it easier to follow the code & diagram together. 
+
+    Mux16(a=instruction, b=outALU, sel=instruction[15], out=outMux1); // 1
+    And(a=instruction[3], b=instruction[15], out=writeM); // 2 - writes to M (external memory location)
+    And(a=instruction[4], b=instruction[15], out=writeD); // 3 - writes to D register (part 9)
+    And(a=instruction[5], b=instruction[15], out=insWriteA); // 4 => 6
+    Not(in=instruction[15], out=addWriteA); // 5 => 6
+    Or(a=insWriteA, b=addWriteA, out=writeA); // 6 => writes to A register 
+    ARegister(in=outMux1, load=writeA, out[0..14]=addressM, out=outRegA); // 7
+    Mux16(a=outRegA, b=inM, sel=instruction[12], out=outMux2); // 8,  Mux16 sends signal to ALU
+    DRegister(in=outALU, load=writeD, out=outRegD); // 9 
+    ALU(x=outRegD, y=outMux2, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outALU, out=outM, zr=zero, ng=negative); // 10
+    
+    // Jump logic
+    Not(in=zero, out=notZero); // 11 => 13
+    Not(in=negative, out=notNegative); // 12 => 13
+    And(a=notZero, b=notNegative, out=positive); // 13 => 17
+    And(a=instruction[0], b=instruction[15], out=insJumpPos); // 14 => 17
+    And(a=instruction[1], b=instruction[15], out=insJumpZero); // 15 => 18
+    And(a=instruction[2], b=instruction[15], out=insJumpNeg); // 16 => 19
+    And(a=insJumpPos, b=positive, out=jumpPos); // 17 => 21
+    And(a=insJumpZero, b=zero, out=jumpZero); // 18 => 20
+    And(a=insJumpNeg, b=negative, out=jumpNeg); // 19 => 20
+    Or(a=jumpNeg, b=jumpZero, out=jump1); // 20 => 21
+    Or(a=jump1, b=jumpPos, out=jump2); // 21 => 22 
+    Not(in=jump2, out=notJump2); // 22
+
+    // PC
+    PC(in=outRegA, load=jump2, inc=notJump2, reset=reset, out[0..14]=pc); // 23
+}
