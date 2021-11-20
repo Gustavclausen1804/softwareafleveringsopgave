@@ -1,8 +1,9 @@
 CHIP MULT4 {
 IN a[4],b[4];
-OUT s[8],t[6];//,u[6];
+OUT s[8],t[6],u[6];
 
 PARTS:
+//school
 And(a=a[0], b=b[0],out=s[0]);
 And(a=a[1], b=b[0],out=FA00a);
 And(a=a[2], b=b[0],out=FA10a);
@@ -39,6 +40,38 @@ FullAdder(a=FA22a, b=FA22b, c=c22, sum=s[5], carry=c32);
 FullAdder(a=FA32a, b=FA32b, c=c32, sum=s[6], carry=s[7]);
 
 
+// U
+And(a=a[0], b=b[0],out=u[0]);
+And(a=a[1], b=b[0],out=U0a);
+And(a=a[2], b=b[0],out=U1a);
+And(a=a[3], b=b[0],out=U2a);
+
+And(a=a[0], b=b[1],out=U0b);
+And(a=a[1], b=b[1],out=U1b);
+And(a=a[2], b=b[1],out=U2b);
+And(a=a[3], b=b[1],out=U3b);
+
+FullAdder(a=U0a, b=U0b, c=false, sum=u[1], carry=uc1);
+FullAdder(a=U1a, b=U1b, c=uc1, sum=u[2], carry=uc2);
+FullAdder(a=U2a, b=U2b, c=uc2, sum=u[3], carry=uc3);
+FullAdder(a=false, b=U3b, c=uc3, sum=u[4], carry=u[5]);
+
+
+// T
+And(a=a[0], b=b[2],out=t[0]);
+And(a=a[1], b=b[2],out=T0a);
+And(a=a[2], b=b[2],out=T1a);
+And(a=a[3], b=b[2],out=T2a);
+
+And(a=a[0], b=b[3],out=T0b);
+And(a=a[1], b=b[3],out=T1b);
+And(a=a[2], b=b[3],out=T2b);
+And(a=a[3], b=b[3],out=T3b);
+
+FullAdder(a=T0a, b=T0b, c=false, sum=t[1], carry=tc1);
+FullAdder(a=T1a, b=T1b, c=tc1, sum=t[2], carry=tc2);
+FullAdder(a=T2a, b=T2b, c=tc2, sum=t[3], carry=tc3);
+FullAdder(a=false, b=T3b, c=tc3, sum=t[4], carry=t[5]);
 }
 
 
