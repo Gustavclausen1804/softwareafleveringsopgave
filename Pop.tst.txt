@@ -1,0 +1,10 @@
+load Pop.asm,
+output-file PopSamples.out,
+compare-to PopSamples.cmp,
+output-list RAM[1]%D2.6.2;
+
+set RAM[0] 5;
+repeat 5000 {
+  ticktock;
+}
+output;
