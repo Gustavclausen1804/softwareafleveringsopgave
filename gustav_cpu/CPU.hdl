@@ -1,14 +1,12 @@
 CHIP CPU {
-    IN  inM[16],         // M value input  (M = contents of RAM[A])
-        instruction[16], // Instruction for execution
-        reset;           // Signals whether to re-start the current
-                         // program (reset==1) or continue executing
-                         // the current program (reset==0).
+    IN  inM[16],         //  M input
+        instruction[16], // Instruction 
+        reset;           // (reset==1) or (reset==0) (restart or continue)
 
-    OUT outM[16],        // M value output
-        writeM,          // Write to M? 
-        addressM[15],    // Address in data memory (of M)
-        pc[15];          // address of next instruction
+    OUT outM[16],        // M output
+        writeM,          // Write M
+        addressM[15],    // Address of M
+        pc[15];          // Next instruction adress
 
     PARTS:
     // We have given each part an ID which references to the diagram - it makes it easier to follow the code & diagram together. 
