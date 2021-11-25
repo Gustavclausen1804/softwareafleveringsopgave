@@ -9,7 +9,8 @@ CHIP CPU {
         pc[15];          // Next instruction adress
 
     PARTS:
-    // We have given each part an ID which references to the diagram - it makes it easier to follow the code & diagram together. 
+    // We have given each part an ID which references to the diagram "PNG/diagramCPU_with_numbers.png" - it makes it easier to follow the code & diagram together. 
+ 
 
     Mux16(a=instruction, b=outALU, sel=instruction[15], out=outMux1); // 1
     And(a=instruction[3], b=instruction[15], out=writeM); // 2 - writes to M (external memory location)
